@@ -5,18 +5,28 @@ module data_memory #(
 	input wire we,
 	input wire [31:0] a,
 	input wire [31:0] wd,
+	input wire valid,
 	input wire [1:0] write_mode, // 0 = word, 1 = half, 2 = byte
 
-	output wire [31:0] rd
+	output logic [31:0] rd,
+	output logic ready
 );
 
 	logic [31:0] data [DEPTH-1:0];
 
 	localparam int INDEX_BITS = $clog2(DEPTH);
 	
-	assign rd = data[a[INDEX_BITS+1:2]];
 
 	always_ff @(posedge clk) begin
+		if (ready)
+			ready = 0;
+		// reading
+		if (valid) begin
+			rd = data[a[INDEX_BITS+1:2]];
+			ready = 1;
+		end
+
+		// writing
 		if (we) begin
 			if (write_mode == 0)
 				data[a[INDEX_BITS+1:2]] <= wd;

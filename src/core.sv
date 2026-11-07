@@ -12,6 +12,8 @@ module core #(
 	wire [31:0] instr;
 	logic [31:0] pc_next;
 	logic stall;
+	logic ready;
+	logic valid;
 
 	pc_register u_pc (
 		.pc_next(pc_next),
@@ -78,6 +80,8 @@ module core #(
 
 	data_memory #(.DEPTH(1024)) u_data_memory (
 		.clk(clk),
+		.ready(ready),
+		.valid(valid),
 		.a(alu_result),
 		.write_mode(memory_write_mode),
 		.rd(read_data),
@@ -111,6 +115,9 @@ module core #(
 
 	control_unit u_control_unit (
 		.halt(halt),
+		.valid(valid),
+		.stall(stall),
+		.ready(ready),
 		.memory_write_mode(memory_write_mode),
 		.op(instr[6:0]),
 		.funct_3(instr[14:12]),
@@ -131,7 +138,6 @@ module core #(
 
 	always_comb begin
 		result = 0;
-		stall = 0;
 		pc_next = pc_plus_4;
 		alu_source_b = alu_source_select ? imm_extended : write_data;
 		register_file_we_3 = register_write & ~stall;

@@ -5,6 +5,7 @@ module control_unit (
 	input wire zero_flag,
 	input wire sign_flag,
 	input wire overflow_flag,
+	input wire ready,
 
 	output wire halt,
 	output wire [1:0] memory_write_mode,
@@ -15,7 +16,9 @@ module control_unit (
 	output wire [3:0] alu_control,
 	output wire alu_source_select,
 	output wire [2:0] imm_source_select,
-	output wire register_file_we
+	output wire register_file_we,
+	output wire valid,
+	output wire stall
 );
 
 	wire jalr;
@@ -30,6 +33,7 @@ module control_unit (
 
 	main_decoder u_main_decoder (
 		.halt(halt),
+		.valid(valid),
 		.op(op),
 		.branch_eq(branch_eq),
 		.branch_ne(branch_ne),
@@ -60,6 +64,7 @@ module control_unit (
 
 	always_comb begin
 		pc_source_select = 0;
+		stall = valid & ~ready;
 		if (branch_eq && zero_flag)
 			pc_source_select = 1;
 		if (branch_ne && ~zero_flag)

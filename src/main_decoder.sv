@@ -3,6 +3,7 @@ module main_decoder (
 	input wire [2:0] funct_3,
 
 	output logic [1:0] memory_write_mode,
+	output logic valid,
 	output logic branch_eq,
 	output logic halt,
 	output logic branch_ne,
@@ -40,6 +41,7 @@ module main_decoder (
 		halt = 0;
 		extend_mode = 'x;
 		memory_write_mode = 'x;
+		valid = 0;
 		
 		if (op == 7'b1110011) // system (ebreak, ecall)
 			halt = 1;
@@ -69,11 +71,13 @@ module main_decoder (
 				4: extend_mode = 4; // lbu
 				5: extend_mode = 3; // lhu
 			endcase
+			valid = 1;
 		end
 		if (op == 7'b0100011) begin // store
 			register_file_we = 0;
 			imm_source_select = 1;
 			alu_source_select = 1;
+			valid = 1;
 			memory_we = 1;
 			result_source_select = 'x;
 			alu_operation = 2'b00;

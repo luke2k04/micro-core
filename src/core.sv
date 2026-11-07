@@ -11,9 +11,11 @@ module core #(
 	wire [31:0] pc_plus_4;
 	wire [31:0] instr;
 	logic [31:0] pc_next;
+	logic stall;
 
 	pc_register u_pc (
 		.pc_next(pc_next),
+		.stall(stall),
 		.clk(clk),
 		.pc(pc),
 		.reset(reset)
@@ -26,11 +28,12 @@ module core #(
 		.rd(instr)
 	);
 
-	wire register_file_we_3;
+	logic register_file_we_3;
 	wire [31:0] extended_data, register_file_rd_1, write_data;
 	logic [31:0] result;
 
 	wire [2:0] result_source;
+	logic register_write;
 
 	register_file u_register_file (
 		.clk(clk),
@@ -68,9 +71,10 @@ module core #(
 		.zero_flag(alu_zero_flag)
 	);
 
-	wire memory_we;
+	logic memory_we;
 	wire [31:0] read_data;
 	wire [1:0] memory_write_mode;
+	logic memory_write;
 
 	data_memory #(.DEPTH(1024)) u_data_memory (
 		.clk(clk),
@@ -116,19 +120,22 @@ module core #(
 		.overflow_flag(alu_overflow_flag),
 		.pc_source_select(pc_source_select),
 		.result_source_select(result_source),
-		.memory_we(memory_we),
+		.memory_we(memory_write),
 		.alu_control(alu_control),
 		.alu_source_select(alu_source_select),
 		.imm_source_select(imm_source_select),
 		.extend_mode(extend_mode),
-		.register_file_we(register_file_we_3)
+		.register_file_we(register_write)
 	);
 		
 
 	always_comb begin
 		result = 0;
+		stall = 0;
 		pc_next = pc_plus_4;
 		alu_source_b = alu_source_select ? imm_extended : write_data;
+		register_file_we_3 = register_write & ~stall;
+		memory_we = memory_write & ~stall;
 
 		case (result_source)
 			0: result = alu_result;

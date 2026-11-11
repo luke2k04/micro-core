@@ -23,13 +23,6 @@ module core #(
 		.reset(reset)
 	); 
 
-	instruction_memory #(
-		.DEPTH(1024)
-	) u_instruction_memory (
-		.a(pc),
-		.rd(instr)
-	);
-
 	logic register_file_we_3;
 	wire [31:0] extended_data, register_file_rd_1, write_data;
 	logic [31:0] result;
@@ -77,6 +70,7 @@ module core #(
 	wire [31:0] read_data;
 	wire [1:0] memory_write_mode;
 	logic memory_write;
+	logic [31:0] instruction_address;
 
 	data_memory #(.DEPTH(1024)) u_data_memory (
 		.clk(clk),
@@ -86,6 +80,8 @@ module core #(
 		.write_mode(memory_write_mode),
 		.rd(read_data),
 		.wd(write_data),
+		.instruction_address(instruction_address),
+		.read_instruction(instr),
 		.we(memory_we)
 	);
 
@@ -156,6 +152,10 @@ module core #(
 			1: pc_next = pc_target;
 			2: pc_next = {alu_result[31:1], 1'b0};
 		endcase
+
+		if (reset)
+			pc_next = 0;
+		instruction_address = stall ? pc : pc_next;
 	end
 endmodule
 `default_nettype wire

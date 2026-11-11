@@ -7,9 +7,11 @@ module data_memory #(
 	input wire [31:0] wd,
 	input wire valid,
 	input wire [1:0] write_mode, // 0 = word, 1 = half, 2 = byte
+	input wire [31:0] instruction_address,
 
 	output logic [31:0] rd,
-	output logic ready
+	output logic ready,
+	output logic [31:0] read_instruction
 );
 
 	logic [31:0] data [DEPTH-1:0];
@@ -18,9 +20,12 @@ module data_memory #(
 	
 
 	always_ff @(posedge clk) begin
+		// reading instruction
+		read_instruction = data[instruction_address[INDEX_BITS+1:2]];
+		
 		if (ready)
 			ready = 0;
-		// reading
+		// reading data
 		if (valid) begin
 			rd = data[a[INDEX_BITS+1:2]];
 			ready = 1;

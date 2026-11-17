@@ -9,13 +9,16 @@ module data_memory #(
 	input wire [1:0] write_mode, // 0 = word, 1 = half, 2 = byte
 
 	output logic [31:0] rd,
-	output logic ready
+	output logic ready,
+
+	input wire [31:0] instruction_address,
+	output wire [31:0] read_instruction
 );
 
 	logic [31:0] data [DEPTH-1:0];
 
 	localparam int INDEX_BITS = $clog2(DEPTH);
-	
+	assign read_instruction = data[instruction_address[INDEX_BITS+1:2]];
 
 	always_ff @(posedge clk) begin
 		if (ready)

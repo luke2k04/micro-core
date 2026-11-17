@@ -4,7 +4,7 @@ TEST_NAME ?= default
 INSTRUCTIONS_DIR := tests/instructions
 
 build-test: | scratch
-	verilator -j 0 --Mdir build --binary tests/tb/core/tb.sv src/*.sv
+	verilator -j 0 --Mdir build --binary tests/tb/core/tb.sv src/*.sv --top-module tb
 
 scratch:
 	mkdir -p build/scratch

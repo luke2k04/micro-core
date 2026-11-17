@@ -23,13 +23,6 @@ module core #(
 		.reset(reset)
 	); 
 
-	instruction_memory #(
-		.DEPTH(1024)
-	) u_instruction_memory (
-		.a(pc),
-		.rd(instr)
-	);
-
 	logic register_file_we_3;
 	wire [31:0] extended_data, register_file_rd_1, write_data;
 	logic [31:0] result;
@@ -86,7 +79,9 @@ module core #(
 		.write_mode(memory_write_mode),
 		.rd(read_data),
 		.wd(write_data),
-		.we(memory_we)
+		.we(memory_we),
+		.instruction_address(pc),
+		.read_instruction(instr)
 	);
 
 	wire [2:0] extend_mode;

@@ -20,14 +20,14 @@ module memory #(
 	localparam int INDEX_BITS = $clog2(DEPTH);
 
 	always_ff @(posedge clk) begin
-		read_instruction = data[instruction_address[INDEX_BITS+1:2]];
+		read_instruction <= data[instruction_address[INDEX_BITS+1:2]];
 
 		if (ready)
-			ready = 0;
+			ready <= 0;
 		// reading
 		if (valid) begin
-			rd = data[a[INDEX_BITS+1:2]];
-			ready = 1;
+			rd <= data[a[INDEX_BITS+1:2]];
+			ready <= 1;
 		end
 
 		// writing

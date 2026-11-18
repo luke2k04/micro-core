@@ -1,4 +1,4 @@
-module data_memory #(
+module memory #(
 	parameter int DEPTH = 1024
 	) (
 	input wire clk,
@@ -18,9 +18,10 @@ module data_memory #(
 	logic [31:0] data [DEPTH-1:0];
 
 	localparam int INDEX_BITS = $clog2(DEPTH);
-	assign read_instruction = data[instruction_address[INDEX_BITS+1:2]];
 
 	always_ff @(posedge clk) begin
+		read_instruction = data[instruction_address[INDEX_BITS+1:2]];
+
 		if (ready)
 			ready = 0;
 		// reading

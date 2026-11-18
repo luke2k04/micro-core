@@ -70,8 +70,9 @@ module core #(
 	wire [31:0] read_data;
 	wire [1:0] memory_write_mode;
 	logic memory_write;
+	logic [31:0] next_instruction;
 
-	data_memory #(.DEPTH(1024)) u_data_memory (
+	memory #(.DEPTH(1024)) u_memory (
 		.clk(clk),
 		.ready(ready),
 		.valid(valid),
@@ -80,7 +81,7 @@ module core #(
 		.rd(read_data),
 		.wd(write_data),
 		.we(memory_we),
-		.instruction_address(pc),
+		.instruction_address(next_instruction),
 		.read_instruction(instr)
 	);
 
@@ -151,6 +152,8 @@ module core #(
 			1: pc_next = pc_target;
 			2: pc_next = {alu_result[31:1], 1'b0};
 		endcase
+
+		next_instruction = stall ? pc : pc_next;
 	end
 endmodule
 `default_nettype wire

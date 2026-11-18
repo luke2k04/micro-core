@@ -17,8 +17,10 @@ module tb ();
 	initial begin
 		$value$plusargs("memory=%s", memory_file);
 		$value$plusargs("dump=%s", memory_dump_file);
+		$dumpfile("wave.vcd");
+		$dumpvars(0, dut);
 
-		$readmemh(memory_file, dut.u_data_memory.data);
+		$readmemh(memory_file, dut.u_memory.data);
 		clk = 0;
 		reset = 1;
 		#10 reset = 0;
@@ -27,7 +29,7 @@ module tb ();
 			#10;
 		while (~halt);
 
-		$writememh(memory_dump_file, dut.u_data_memory.data, 0, 15);
+		$writememh(memory_dump_file, dut.u_memory.data, 0, 15);
 		$display("Exit code (a0) = %h", dut.u_register_file.registers[10]);
 		$finish();
 	end

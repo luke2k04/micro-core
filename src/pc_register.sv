@@ -8,7 +8,7 @@ module pc_register (
 
 always @(posedge clk or posedge reset) begin
 	if (reset) 
-		pc <= 0;
+		pc <= -4;
 	else 
 		pc <= stall ? pc : pc_next;
 end

@@ -65,7 +65,7 @@ module core #(
 	wire [31:0] read_data;
 	wire [1:0] memory_write_mode;
 
-	memory #(.DEPTH(1024)) u_memory (
+	memory #(.DEPTH('h200)) u_memory (
 		.instruction_address(pc),
 		.read_instruction(instr),
 		.clk(clk),

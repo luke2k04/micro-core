@@ -27,7 +27,7 @@ module tb ();
 			#10;
 		while (~halt);
 
-		$writememh(memory_dump_file, dut.u_memory.data, 0, 15);
+		$writememh(memory_dump_file, dut.u_memory.data, 0, 'h7F);
 		$display("Exit code (a0) = %h", dut.u_register_file.registers[10]);
 		$finish();
 	end

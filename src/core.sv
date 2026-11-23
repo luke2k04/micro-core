@@ -19,13 +19,6 @@ module core #(
 		.reset(reset)
 	); 
 
-	instruction_memory #(
-		.DEPTH(1024)
-	) u_instruction_memory (
-		.a(pc),
-		.rd(instr)
-	);
-
 	wire register_file_we_3;
 	wire [31:0] extended_data, register_file_rd_1, write_data;
 	logic [31:0] result;
@@ -72,7 +65,9 @@ module core #(
 	wire [31:0] read_data;
 	wire [1:0] memory_write_mode;
 
-	data_memory #(.DEPTH(1024)) u_data_memory (
+	memory #(.DEPTH(1024)) u_memory (
+		.instruction_address(pc),
+		.read_instruction(instr),
 		.clk(clk),
 		.a(alu_result),
 		.write_mode(memory_write_mode),
